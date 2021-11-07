@@ -1,19 +1,21 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { MatiCoin } from "~/typings/MatiCoin";
 
 describe("MatiCoin contract", function () {
   let Token;
-  let hardhatToken;
-  let owner;
-  let addr1;
-  let addr2;
-  let addrs;
+  let hardhatToken: MatiCoin;
+  let owner: SignerWithAddress;
+  let addr1: SignerWithAddress;
+  let addr2: SignerWithAddress;
+  let addrs: SignerWithAddress[];
 
   beforeEach(async function () {
     Token = await ethers.getContractFactory("MatiCoin");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
-    hardhatToken = await Token.deploy();
+    hardhatToken = await Token.deploy() as MatiCoin;
   });
 
   describe("Deployment", function () {
