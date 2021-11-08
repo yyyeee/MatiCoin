@@ -37,7 +37,7 @@ contract MatiCoinVesting is Ownable {
         _matiCoin.transferFrom(owner(), address(this), amount);
     }
 
-    function vestingBalance() external view returns (uint256) {
+    function vestingBalance() public view returns (uint256) {
         Vesting storage vesting = _vestings[msg.sender];
         uint256 amount = vesting.amount;
         if (amount == 0) {
@@ -46,18 +46,23 @@ contract MatiCoinVesting is Ownable {
         if (vesting.start.add(_duration) <= block.timestamp) {
             return vesting.amount.sub(vesting.released);
         }
-        console.log(amount);
-        console.log(vesting.start);
         uint256 claimableAmount = (block.timestamp.sub(vesting.start)).mul(amount).div(_duration);
-        console.log(claimableAmount);
         uint256 toClaimAmount = claimableAmount.sub(vesting.released);
         return toClaimAmount;
     }
 
     function claim(uint256 amount) public {
-        
-        // checkBalance
-        // takeFromVesting 
-        // _vestedAccounts[to].cleanup
+        require(amount > 0, "0 cannot be claimed.");
+        uint256 currentBalance = vestingBalance();
+        require(currentBalance >= amount, "Amount not available for address");
+        // Is it transactional
+        _matiCoin.transfer(msg.sender, amount);
+        Vesting storage vesting = _vestings[msg.sender];
+        uint256 totalReleased = vesting.released + amount;
+        if (totalReleased == vesting.amount) {
+            delete _vestings[msg.sender];
+        } else {
+            _vestings[msg.sender].released = totalReleased;
+        }
     }
 }

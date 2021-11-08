@@ -25,7 +25,7 @@ describe("MatiCoin contract", function () {
   });
 
   describe("Deployment", function () {
-    it("Should set the right owner", async function () {
+    it("Should set the right owners", async function () {
       expect(await matiCoin.owner()).to.equal(owner.address);
       expect(await vesting.owner()).to.equal(owner.address);
     });
@@ -78,6 +78,49 @@ describe("MatiCoin contract", function () {
       changeTime(2000);
       const vestingBalance = await vesting.connect(addr1).vestingBalance();
       expect(vestingBalance).to.equal(50);
+    });
+
+    it("Should not allow to claim 0", async function () {
+      await expect(
+        vesting.connect(addr1).claim(0)
+      ).to.be.revertedWith("0 cannot be claimed.");
+    });
+
+    it("Should not be able to claim full vesting after not full time", async function () {
+      await vesting.vest(addr1.address, 50);
+      changeTime(800);
+      await expect(
+        vesting.connect(addr1).claim(50)
+      ).to.be.revertedWith("Amount not available for address");
+    });
+
+    it("Should be able to claim half after half time", async function () {
+      await vesting.vest(addr1.address, 50);
+      changeTime(500);
+      await vesting.connect(addr1).claim(25);
+      const vestingBalance = await matiCoin.connect(vesting.address).balanceOf(vesting.address);
+      expect(vestingBalance).to.equal(25);
+      const userBalance = await matiCoin.connect(addr1).balanceOf(addr1.address);
+      expect(userBalance).to.equal(25);
+    });
+
+    it("Should be able to claim full vesting after full time", async function () {
+      await vesting.vest(addr1.address, 50);
+      changeTime(1000);
+      await vesting.connect(addr1).claim(50);
+      const vestingBalance = await matiCoin.connect(vesting.address).balanceOf(vesting.address);
+      expect(vestingBalance).to.equal(0);
+      const userBalance = await matiCoin.connect(addr1).balanceOf(addr1.address);
+      expect(userBalance).to.equal(50);
+    });
+
+    it("Should not be able to claim any vesting after full time if already claimed", async function () {
+      await vesting.vest(addr1.address, 50);
+      changeTime(2000);
+      await vesting.connect(addr1).claim(50);
+      await expect(
+        vesting.connect(addr1).claim(1)
+      ).to.be.revertedWith("Amount not available for address");
     });
   });
 });
