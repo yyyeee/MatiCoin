@@ -10,7 +10,7 @@ async function main() {
   const Token = await ethers.getContractFactory("MatiCoin");
   const Vesting = await ethers.getContractFactory("MatiCoinVesting");
   const token = await Token.deploy();
-  const vesting = await Vesting.deploy(token.address, 1000);
+  const vesting = await Vesting.deploy(token.address);
   await token.approve(vesting.address, await token.totalSupply());
 
   console.log("Token address:", token.address);

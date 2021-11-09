@@ -15,7 +15,6 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^4.3.2",
-    "@openzeppelin/test-helpers": "^0.5.15",
     "@typechain/ethers-v5": "^8.0.1",
     "@typechain/hardhat": "^3.0.0",
     "@types/chai": "^4.2.22",

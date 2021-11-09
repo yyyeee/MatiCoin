@@ -26,18 +26,27 @@ import type {
 
 export interface MatiCoinVestingInterface extends ethers.utils.Interface {
   functions: {
+    "availableVestingBalance()": FunctionFragment;
     "claim(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "totalVestingBalance()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "vest(address,uint256)": FunctionFragment;
-    "vestingBalance()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "availableVestingBalance",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalVestingBalance",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -48,11 +57,11 @@ export interface MatiCoinVestingInterface extends ethers.utils.Interface {
     functionFragment: "vest",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "vestingBalance",
-    values?: undefined
-  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "availableVestingBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -60,14 +69,14 @@ export interface MatiCoinVestingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "totalVestingBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "vest", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "vestingBalance",
-    data: BytesLike
-  ): Result;
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
@@ -111,6 +120,8 @@ export interface MatiCoinVesting extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    availableVestingBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     claim(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -122,19 +133,21 @@ export interface MatiCoinVesting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    totalVestingBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     vest(
-      to: string,
+      receiver: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    vestingBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  availableVestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
   claim(
     amount: BigNumberish,
@@ -147,25 +160,29 @@ export interface MatiCoinVesting extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  totalVestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   vest(
-    to: string,
+    receiver: string,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  vestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
   callStatic: {
+    availableVestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    totalVestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -173,12 +190,10 @@ export interface MatiCoinVesting extends BaseContract {
     ): Promise<void>;
 
     vest(
-      to: string,
+      receiver: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    vestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -193,6 +208,8 @@ export interface MatiCoinVesting extends BaseContract {
   };
 
   estimateGas: {
+    availableVestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -204,21 +221,25 @@ export interface MatiCoinVesting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    totalVestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     vest(
-      to: string,
+      receiver: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    vestingBalance(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    availableVestingBalance(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     claim(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -230,17 +251,19 @@ export interface MatiCoinVesting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    totalVestingBalance(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     vest(
-      to: string,
+      receiver: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    vestingBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

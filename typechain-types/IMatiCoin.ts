@@ -26,12 +26,10 @@ import type {
 
 export interface IMatiCoinInterface extends ethers.utils.Interface {
   functions: {
-    "balanceOf(address)": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "transfer",
     values: [string, BigNumberish]
@@ -41,7 +39,6 @@ export interface IMatiCoinInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
@@ -78,8 +75,6 @@ export interface IMatiCoin extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
     transfer(
       recipient: string,
       amount: BigNumberish,
@@ -93,8 +88,6 @@ export interface IMatiCoin extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
     recipient: string,
@@ -110,8 +103,6 @@ export interface IMatiCoin extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     transfer(
       recipient: string,
       amount: BigNumberish,
@@ -129,8 +120,6 @@ export interface IMatiCoin extends BaseContract {
   filters: {};
 
   estimateGas: {
-    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     transfer(
       recipient: string,
       amount: BigNumberish,
@@ -146,11 +135,6 @@ export interface IMatiCoin extends BaseContract {
   };
 
   populateTransaction: {
-    balanceOf(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     transfer(
       recipient: string,
       amount: BigNumberish,
