@@ -2,8 +2,8 @@
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "hardhat/console.sol";
 
 interface IMatiCoin {
     function transfer(address recipient, uint256 amount) external returns (bool);
@@ -53,14 +53,13 @@ contract MatiCoinVesting is Ownable {
         Vesting storage vesting = _vestings[msg.sender];
         uint256 currentBalance = _calculateAvailableBalance(vesting);
         require(currentBalance >= amount, "MatiCoinVesting: Tokens not available.");
-        // Is it transactional?
-        _matiCoin.transfer(msg.sender, amount);
         uint256 totalReleased = vesting.released + amount;
         if (totalReleased == vesting.amount) {
             delete _vestings[msg.sender];
         } else {
             _vestings[msg.sender].released = totalReleased;
         }
+        _matiCoin.transfer(msg.sender, amount);
     }
 
     function _calculateAvailableBalance(Vesting memory vesting) private view returns (uint256) {

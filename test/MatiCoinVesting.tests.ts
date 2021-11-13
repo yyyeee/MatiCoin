@@ -3,11 +3,14 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { MatiCoin } from "~/typings/MatiCoin";
 import { MatiCoinVesting } from "~/typings/MatiCoinVesting";
+import { WETH } from "~/typings/WETH";
 import { increaseTime, ZERO_ADDRESS } from "./utils";
 
 describe("MatiCoinVesting contract", function () {
   let Token;
   let Vesting;
+  let WETH;
+  let weth: WETH;
   let matiCoin: MatiCoin;
   let vesting: MatiCoinVesting;
   let owner: SignerWithAddress;
@@ -20,11 +23,14 @@ describe("MatiCoinVesting contract", function () {
   const halfPeriod = vestingPeriod / 2;
 
   beforeEach(async function () {
+    WETH = await ethers.getContractFactory("WETH");
     Token = await ethers.getContractFactory("MatiCoin");
     Vesting = await ethers.getContractFactory("MatiCoinVesting");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
+    weth = await WETH.deploy() as WETH;
     matiCoin = await Token.deploy() as MatiCoin;
+    // matiCoin = await Token.deploy(weth.address) as MatiCoin;
     vesting = await Vesting.deploy(matiCoin.address) as MatiCoinVesting;
     await matiCoin.approve(vesting.address, await matiCoin.totalSupply());
   });
