@@ -1,6 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { MatiCoin } from "~/typings/MatiCoin";
 import { MatiCoinVesting } from "~/typings/MatiCoinVesting";
 import { WETH } from "~/typings/WETH";
@@ -29,7 +29,7 @@ describe("MatiCoinVesting contract", function () {
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     weth = await WETH.deploy() as WETH;
-    matiCoin = await Token.deploy() as MatiCoin;
+    matiCoin = await upgrades.deployProxy(Token) as MatiCoin;
     // matiCoin = await Token.deploy(weth.address) as MatiCoin;
     vesting = await Vesting.deploy(matiCoin.address) as MatiCoinVesting;
     await matiCoin.approve(vesting.address, await matiCoin.totalSupply());

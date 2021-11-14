@@ -1,32 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "hardhat/console.sol";
 
-import "./WETH.sol";
-
-// contract MatiCoin is ERC20, Ownable {
-//     WETH _weth;
-
-//     constructor(address wethAddress) ERC20("MatiCoin", "MaCo") {
-//         _mint(msg.sender, 1000 * 10 ** decimals());
-//         _weth = WETH(wethAddress);
-//     }
-
-//     function mint(address to, uint256 amount) public onlyOwner {
-//         _mint(to, amount);
-//     }
-
-//     function mint() external payable {
-//         _mint(msg.sender, 10 * msg.value);
-//         _weth.mint();
-//     }
-// }
-
-contract MatiCoin is ERC20, Ownable {
-    constructor() ERC20("MatiCoin", "MaCo") {
+contract MatiCoin is ERC20Upgradeable, OwnableUpgradeable {
+    function initialize() initializer public {
+        __ERC20_init("MatiCoin", "MaCo");
+        __Ownable_init();
         _mint(msg.sender, 1000 * 10 ** decimals());
     }
 

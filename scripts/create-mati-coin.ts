@@ -1,19 +1,20 @@
-import { run, ethers } from "hardhat";
+import { ethers, upgrades }  from "hardhat";
 
 async function main() {
   const [deployer] = await ethers.getSigners();
 
   console.log("Deploying contracts with the account:", deployer.address);
-
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const Token = await ethers.getContractFactory("MatiCoin");
-  const Vesting = await ethers.getContractFactory("MatiCoinVesting");
-  const token = await Token.deploy();
-  const vesting = await Vesting.deploy(token.address);
-  await token.approve(vesting.address, await token.totalSupply());
+  const MatiCoin = await ethers.getContractFactory("MatiCoin");
+  const coin = await upgrades.deployProxy(MatiCoin);
+  await coin.deployed();
 
-  console.log("Token address:", token.address);
+  const Vesting = await ethers.getContractFactory("MatiCoinVesting");
+  const vesting = await Vesting.deploy(coin.address);
+  await coin.approve(vesting.address, await coin.totalSupply());
+
+  console.log("MatiCoin deployed to:", coin.address);
   console.log("Vesting address:", vesting.address);
 }
 

@@ -1,7 +1,6 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { MatiCoin } from "~/typings/MatiCoin";
 import { WETH } from "~/typings/WETH";
 import { parseEther } from "./utils";
@@ -22,7 +21,7 @@ describe("MatiCoin contract", function () {
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     weth = await WETH.deploy() as WETH;
-    matiCoin = await Token.deploy() as MatiCoin;
+    matiCoin = await upgrades.deployProxy(Token) as MatiCoin;
     // matiCoin = await Token.deploy(weth.address) as MatiCoin;
   });
 
